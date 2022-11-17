@@ -14,6 +14,19 @@
 
     <v-divider class="mx-4"></v-divider>
 
+    <v-alert
+        v-if="message.type != '' && message.value != ''"
+        prominent
+        :type="message.type"
+        class="mx-4"
+    >
+      <v-row align="center">
+        <v-col>
+          {{ message.value }}
+        </v-col>
+      </v-row>
+    </v-alert>
+
     <v-card-title>Participantes</v-card-title>
     <v-card-text>
       <v-text-field
@@ -52,19 +65,33 @@
 </template>
 
 <script>
+import { api } from "../services/api";
+
 export default {
   data() {
     return {
       challengers: [],
+      message: {
+        type: "",
+        value: ""
+      }
     };
   },
   methods: {
-    generateChallenges() {
+    async generateChallenges() {
       if (!this.canGenerateChallenges) {
         return;
       }
 
-      this.$router.push({ name: "mission-list" });
+      try {
+        await api.post("/challenges", {
+          "challengersasss": this.challengers
+        });
+        this.$router.push({ name: "mission-list" });
+      } catch (error) {
+        this.message.type = "error";
+        this.message.value = "O serviço está indisponível no momento. Tente novamente mais tarde.";
+      }
     },
   },
   computed: {
