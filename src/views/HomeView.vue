@@ -85,7 +85,7 @@ export default {
 
       try {
         await api.post("/challenges", {
-          "challengersasss": this.challengers
+          "challengers": this.challengers
         });
         this.$router.push({ name: "mission-list" });
       } catch (error) {
