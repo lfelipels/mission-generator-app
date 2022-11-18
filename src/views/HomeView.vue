@@ -80,6 +80,8 @@ export default {
   methods: {
     async generateChallenges() {
       if (!this.canGenerateChallenges) {
+        this.message.type = "warning";
+        this.message.value = "Informe o nomes de todos os desafiantes";
         return;
       }
 
@@ -87,6 +89,9 @@ export default {
         await api.post("/challenges", {
           "challengers": this.challengers
         });
+
+        this.$store.commit("saveChallengers", this.challengers);
+
         this.$router.push({ name: "mission-list" });
       } catch (error) {
         this.message.type = "error";
