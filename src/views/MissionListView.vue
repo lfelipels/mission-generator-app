@@ -1,25 +1,26 @@
 <template>
-  <div 
-      class="d-flex flex-column align-center justify-content-center mx-auto my-12"
-      style="width: 900px;">
+  <div
+    class="d-flex flex-column align-center justify-content-center mx-auto my-12"
+    style="width: 900px"
+  >
     <v-row>
       <v-col cols="12">
-        <v-btn
-          class="ma-2"
-          outlined    
-          @click="clickHandleNewChallenge"
-        >
+        <v-btn class="ma-2" outlined @click="clickHandleNewChallenge">
           Criar novo desafio
+        </v-btn>
+        <v-btn class="ma-2" outlined @click="clickHandleNewMissions">
+          Gerar novas missões
         </v-btn>
       </v-col>
     </v-row>
-        
-    <MissionCard 
+
+    <MissionCard
       v-for="(challenge, idx) in challengesByUsers"
       :key="idx"
-      :challenger-name="challenge.challengerName" 
-      :missions="challenge.missions" 
-      class="mb-2" />
+      :challenger-name="challenge.challenger"
+      :missions="challenge.missions"
+      class="mb-2"
+    />
   </div>
 </template>
 
@@ -30,39 +31,58 @@ import MissionCard from "../components/MissionCard.vue";
 export default {
   data() {
     return {
-      challengesByUsers: []
-    }
+      challengesByUsers: [],
+    };
   },
   mounted() {
+    if (this.$store.state.challengers.length < 1) {
+      this.$router.push({ name: "home" });
+      return;
+    }
     this.loadChallenges();
   },
   methods: {
+    redirectToHomeWithError(error) {
+      this.$store.commit("setMessageError", error);
+      this.$store.commit("saveChallengers", []);
+      this.$router.push({ name: "home" });
+    },
+
     async loadChallenges() {
       this.challengesByUsers = [];
+      console.log(this.$store.state.challengers);
       try {
-        const resp = await api.get("/challenges");
-
-        for (let name in resp.data) {
-          if (Object.hasOwnProperty.call(resp.data, name)) {
-            this.challengesByUsers.push({
-              challengerName: name,
-              missions: resp.data[name]
-            });
-          }
-        }
+        const resp = await api.get("/challenges", {
+          params: { challengers: this.$store.state.challengers.join(",") },
+        });
+        this.challengesByUsers = resp.data;
       } catch (error) {
-        //
-        console.log(error);
+        this.redirectToHomeWithError(
+          "O serviço está indisponível no momento. Tente novamente mais tarde."
+        );
       }
     },
 
     clickHandleNewChallenge() {
-      this.$router.push({ name: "home"});
-    }
+      this.$store.commit("saveChallengers", []);
+      this.$router.push({ name: "home" });
+    },
+
+    async clickHandleNewMissions() {
+      try {
+        await api.post("/challenges", {
+          challengers: this.$store.state.challengers,
+        });
+        this.loadChallenges();
+      } catch (error) {
+        this.redirectToHomeWithError(
+          "O serviço está indisponível no momento. Tente novamente mais tarde."
+        );
+      }
+    },
   },
   components: {
-    MissionCard
-  }
-}
+    MissionCard,
+  },
+};
 </script>
-

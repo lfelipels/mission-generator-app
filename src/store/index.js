@@ -1,11 +1,21 @@
 export default {
   state: {
-    challegers: [],
+    challengers: [],
+    messageError: "",
   },
   mutations: {
     saveChallengers(state, payload) {
-      state.challegers = payload;
+      state.challengers = payload;
+    },
+    setMessageError(state, payload) {
+      state.messageError = payload;
     },
   },
-  actions: {},
+  actions: {
+    getMessageError(context) {
+      const msg = context.state.messageError || "";
+      context.commit("setMessageError", "");
+      return msg;
+    },
+  },
 };
