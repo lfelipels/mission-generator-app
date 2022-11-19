@@ -1,24 +1,35 @@
-# gerador-missoes-app
+# Gerador de missões App
 
-## Project setup
+Aplicação desenvolvida em VueJS para consumir uma API que gera missões aleatórias para seus usuários.
+
+## Tecnologias usadas
+
+- VueJS
+- Vuex
+- Vuetify
+- Axios
+
+## Configuração do projetos
+
+### Requisitos
+
+- Node versão 18.12.1 - LST;
+- [Gerador Missões API](https://github.com/lfelipels/mission-generator-api)
+
+### Instalação
+
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Iniciando a aplicação em modo de desenvolvimento
+
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### Compilando para produção
+
 ```
 npm run build
 ```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
